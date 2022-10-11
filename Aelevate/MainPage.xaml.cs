@@ -1,24 +1,74 @@
 ﻿namespace Aelevate;
 
-public partial class MainPage : ContentPage
-{
-	int count = 0;
+public partial class MainPage : ContentPage {
+	const int MAX_DIFF = 10;
+	const int MIN_DIFF = 0;
+    const int MAX_RES = 20;
+    const int MIN_RES = 0;
+    const float MAX_TILT = 5;
+    const float MIN_TILT = 0;
 
-	public MainPage()
-	{
-		InitializeComponent();
+    int _resistance = 0;
+	int Resistance {
+		get => _resistance;
+		set {
+			_resistance = value;
+			resistanceDisplay.Text = string.Format("{0}", _resistance);
+		}
 	}
 
-	private void OnCounterClicked(object sender, EventArgs e)
-	{
-		count++;
+	float _tilt = 0;
+	float Tilt {
+		get => _tilt;
+		set {
+			_tilt = value;
+            bikeDisplay.Rotation = -value * 3;
+			tiltDisplay.Text = string.Format(" {0:F1}°", _tilt);
+        }
+	}
 
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"Clicked {count} times";
+	int _difficulty = 0;
+    int Difficulty {
+		get => _difficulty;
+		set {
+			_difficulty = value;
+            difficultyDisplay.Text = value.ToString();
+			Tilt = _difficulty / 2f;
+			Resistance = _difficulty * 2;
+        }
+	}
 
-		SemanticScreenReader.Announce(CounterBtn.Text);
+	public MainPage() {
+		InitializeComponent();
+		Difficulty = 0;
+	}
+
+	private void DifficultyUp(object sender, EventArgs e) {
+		Difficulty = Math.Min(Difficulty + 1, MAX_DIFF);
+	}
+
+    private void DifficultyDown(object sender, EventArgs e) {
+        Difficulty = Math.Max(Difficulty - 1, MIN_DIFF);
+    }
+
+    private void ResistanceUp(object sender, EventArgs e) {
+        Resistance = Math.Min(Resistance + 1, MAX_RES);
+    }
+
+    private void ResistanceDown(object sender, EventArgs e) {
+        Resistance = Math.Max(Resistance - 1, MIN_RES);
+    }
+
+    private void TiltUp(object sender, EventArgs e) {
+        Tilt = Math.Min(Tilt + 1, MAX_TILT);
+    }
+
+    private void TiltDown(object sender, EventArgs e) {
+        Tilt = Math.Max(Tilt - 1, MIN_TILT);
+    }
+
+    private void AngleChanged(object sender, ValueChangedEventArgs e) {
+		Tilt = (int)e.NewValue;
 	}
 }
 
