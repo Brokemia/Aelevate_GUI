@@ -60,11 +60,11 @@ public partial class MainPage : ContentPage {
     }
 
     private void TiltUp(object sender, EventArgs e) {
-        Tilt = Math.Min(Tilt + 1, MAX_TILT);
+        Tilt = Math.Min(Tilt + 0.5f, MAX_TILT);
     }
 
     private void TiltDown(object sender, EventArgs e) {
-        Tilt = Math.Max(Tilt - 1, MIN_TILT);
+        Tilt = Math.Max(Tilt - 0.5f, MIN_TILT);
     }
 
     private void AngleChanged(object sender, ValueChangedEventArgs e) {
