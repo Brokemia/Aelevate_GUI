@@ -30,15 +30,15 @@
                     SemanticProperties.HeadingLevel="Level1"
                 />
                 <ImageButton
-                    Grid.Column="1"
-                    Source="plussign.png"
-                    Clicked="DifficultyUp"
-                    WidthRequest="60"
-                />
-                <ImageButton
                     Grid.Column="2"
                     Source="minussign.png"
                     Clicked="DifficultyDown"
+                    WidthRequest="60"
+                />
+                <ImageButton
+                    Grid.Column="1"
+                    Source="plussign.png"
+                    Clicked="DifficultyUp"
                     WidthRequest="60"
                 />
             </Grid>
@@ -59,15 +59,15 @@
                     SemanticProperties.HeadingLevel="Level1"
                 />
                 <ImageButton
-                    Grid.Column="1"
-                    Source="plussign.png"
-                    Clicked="ResistanceUp"
-                    WidthRequest="60"
-                />
-                <ImageButton
                     Grid.Column="2"
                     Source="minussign.png"
                     Clicked="ResistanceDown"
+                    WidthRequest="60"
+                />
+                <ImageButton
+                    Grid.Column="1"
+                    Source="plussign.png"
+                    Clicked="ResistanceUp"
                     WidthRequest="60"
                 />
             </Grid>
@@ -88,15 +88,15 @@
                 SemanticProperties.HeadingLevel="Level1"
                 />
                 <ImageButton
-                Grid.Column="1"
-                Source="plussign.png"
-                Clicked="TiltUp"
-                WidthRequest="60"
-                />
-                <ImageButton
                 Grid.Column="2"
                 Source="minussign.png"
                 Clicked="TiltDown"
+                WidthRequest="60"
+                />
+                <ImageButton
+                Grid.Column="1"
+                Source="plussign.png"
+                Clicked="TiltUp"
                 WidthRequest="60"
                 />
             </Grid>
@@ -106,7 +106,7 @@
             Grid.Column="1"
             >
             <Image
-            
+            MaximumWidthRequest="600"
             Source="route.png"
             
             />
