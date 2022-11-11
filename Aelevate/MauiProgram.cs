@@ -1,4 +1,7 @@
-﻿namespace Aelevate;
+﻿using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+
+namespace Aelevate;
 
 public static class MauiProgram
 {
@@ -13,6 +16,14 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			});
 
-		return builder.Build();
+#if DEBUG
+        builder.Services.AddLogging(configure =>
+        {
+			configure.SetMinimumLevel(LogLevel.Trace);
+			configure.AddNLog();
+        });
+#endif
+
+        return builder.Build();
 	}
 }
