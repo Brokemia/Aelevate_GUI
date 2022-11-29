@@ -7,7 +7,7 @@ namespace Aelevate {
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
         private const int SPEED_COUNT = 20;
         private float maxSpeed = 0;
-        private readonly List<float> pastSpeeds = new();
+        private readonly List<float> pastSpeeds = new() { 0 }; // TODO fix
 
         public void AddSpeed(float speed) {
             pastSpeeds.Insert(0, speed);

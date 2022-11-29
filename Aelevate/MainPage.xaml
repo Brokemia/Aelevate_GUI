@@ -2,178 +2,204 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:drawable="clr-namespace:Aelevate"
-             x:Class="Aelevate.MainPage">
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:local="clr-namespace:Aelevate"
+             x:Class="Aelevate.MainPage"
+             x:Name="mainPage">
     <ContentPage.Resources>
         <drawable:SpeedGraph x:Key="speedGraph" x:Name="speedGraph"/>
+        <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        <toolkit:IsNullConverter x:Key="IsNullConverter" />
+        <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
     </ContentPage.Resources>
+    <ContentPage.BindingContext>
+        <local:RoutesViewModel x:Name="routesModel"/>
+    </ContentPage.BindingContext>
     
     <Grid
         Padding="30,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="11*"/>
             <ColumnDefinition Width="16*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="10*"/>
+            <ColumnDefinition Width="11*"/>
         </Grid.ColumnDefinitions>
-        
-        <ImageButton
-            x:Name="unlockButton"
-            Grid.Column="2"
-            Source="unlocked.png"
-            Clicked="LockUnlock"
-            BackgroundColor="Transparent"
-            />
-        <ImageButton
-            x:Name="lockButton"
-            Grid.Column="2"
-            Source="locked.png"
-            Clicked="LockUnlock"
-            BackgroundColor="Transparent"
-            />
         <VerticalStackLayout
-            Grid.Column="3"
+            Grid.Column="2"
             VerticalOptions="Center"
             Spacing="30">
-            <!--Grid
-                Margin="30,0,15,0"
-                ColumnSpacing="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Label
-                    Grid.Column="0"
-                    Text="Difficulty"
-                    HorizontalOptions="Start"
-                    FontSize="32"
-                    SemanticProperties.HeadingLevel="Level1"
-                />
-                <Label
-                    Grid.Column="1"
-                    x:Name="difficultyDisplay"
-                    Text="0"
-                    SemanticProperties.HeadingLevel="Level1"
-                    FontSize="32"
-                    HorizontalTextAlignment="Center"
-                />
-                <ImageButton
-                    Grid.Column="2"
-                    Source="plussign.png"
-                    Clicked="DifficultyUp"
-                    WidthRequest="60"
-                />
-                <ImageButton
-                    Grid.Column="3"
-                    Source="minussign.png"
-                    Clicked="DifficultyDown"
-                    WidthRequest="60"
-                />
-            </Grid-->
             <Grid
                 Margin="30,0,15,0"
-                ColumnSpacing="10">
+                ColumnSpacing="10"
+                RowSpacing="30">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width=".3*"/>
+                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="1*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="70"/>
+                    <RowDefinition Height="70"/>
+                </Grid.RowDefinitions>
+
+                <ImageButton
+                    x:Name="unlockButton"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    Source="unlocked.png"
+                    Clicked="LockUnlock"
+                    IsVisible="{Binding Path=Locked, Converter={StaticResource InvertedBoolConverter}}"
+                    IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
+                    BackgroundColor="Transparent" />
+                <ImageButton
+                    x:Name="lockButton"
+                    Grid.RowSpan="2"
+                    Grid.Column="0"
+                    Source="locked.png"
+                    Clicked="LockUnlock"
+                    IsVisible="{Binding Locked}"
+                    IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
+                    BackgroundColor="Transparent" />
 
                 <Label
-                    Grid.Column="0"
+                    Grid.Column="1"
                     Text="Resistance"
                     HorizontalOptions="Start"
+                    VerticalOptions="Center"
                     FontSize="32"
                     SemanticProperties.HeadingLevel="Level1"
                 />
                 <Label
-                    Grid.Column="1"
-                    x:Name="resistanceDisplay"
-                    Text="0"
+                    Grid.Column="2"
+                    Text="{Binding Path=Resistance, StringFormat='{0:F0}'}"
                     SemanticProperties.HeadingLevel="Level1"
                     FontSize="32"
-                    HorizontalTextAlignment="Center"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
                 />
                 <ImageButton
-                    Grid.Column="2"
+                    Grid.Column="4"
                     Source="plussign.png"
                     Clicked="ResistanceUp"
+                    IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
                     WidthRequest="60"
+                    HeightRequest="60"
+                    VerticalOptions="Center"
                 />
                 <ImageButton
                     Grid.Column="3"
                     Source="minussign.png"
                     Clicked="ResistanceDown"
+                    IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
                     WidthRequest="60"
+                    VerticalOptions="Center"
                 />
-                
-            </Grid>
-            <Grid
-            Margin="30,0,15,0"
-            ColumnSpacing="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
 
                 <Label
-                Grid.Column="0"
-                Text="Tilt"
-                HorizontalOptions="Start"
-                FontSize="32"
-                SemanticProperties.HeadingLevel="Level1"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Text="Tilt"
+                    HorizontalOptions="Start"
+                    VerticalOptions="Center"
+                    FontSize="32"
+                    SemanticProperties.HeadingLevel="Level1"
                 />
                 <Label
-                    Grid.Column="1"
-                    x:Name="tiltDisplay"
-                    Text="0.0"
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Text="{Binding Path=Tilt, StringFormat=' {0:F1}°'}"
                     SemanticProperties.HeadingLevel="Level1"
                     FontSize="32"
-                    HorizontalTextAlignment="Center"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
                 />
                 <ImageButton
-                Grid.Column="2"
-                Source="plussign.png"
-                Clicked="TiltUp"
-                WidthRequest="60"
+                    Grid.Row="1"
+                    Grid.Column="4"
+                    Source="plussign.png"
+                    Clicked="TiltUp"
+                    WidthRequest="60"
+                    IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
+                    VerticalOptions="Center"
                 />
                 <ImageButton
-                Grid.Column="3"
-                Source="minussign.png"
-                Clicked="TiltDown"
-                WidthRequest="60"
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    Source="minussign.png"
+                    Clicked="TiltDown"
+                    WidthRequest="60"
+                    IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
+                    VerticalOptions="Center"
                 />
+
             </Grid>
         </VerticalStackLayout>
 
         <Border
             Grid.Column="1"
             >
-            <Image
-            
-            Source="route.png"
-            
-            />
+            <ListView ItemsSource="{Binding Routes}">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <VerticalStackLayout>
+                                <Label Grid.Column="1"
+                                   Text="{Binding Name}"
+                                   FontAttributes="Bold" />
+                                <HorizontalStackLayout>
+                                    <ImageButton
+                                        x:Name="playButton"
+                                        WidthRequest="40"
+                                        Source="play.png"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:RoutesViewModel}}, Path=PlayPauseCommand}"
+                                        CommandParameter="{Binding ID}"
+                                        IsVisible="{Binding Path=Playing, Converter={StaticResource InvertedBoolConverter}}"
+                                        BackgroundColor="Transparent"
+                                        />
+                                    <ImageButton
+                                        x:Name="pauseButton"
+                                        WidthRequest="40"
+                                        Source="pause.png"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:RoutesViewModel}}, Path=PlayPauseCommand}"
+                                        CommandParameter="{Binding ID}"
+                                        IsVisible="{Binding Playing}"
+                                        BackgroundColor="Transparent"
+                                        />
+                                    <Slider
+                                        Margin="10"
+                                        Value="{Binding Progress}"
+                                        Minimum="0"
+                                        Maximum="{Binding Length}"
+                                        WidthRequest="600"/>
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Border>
 
         <VerticalStackLayout
             Grid.Column="0"
-            Spacing="40"
+            Spacing="0"
             Margin="0,0,30,0"
             VerticalOptions="Center">
             <GraphicsView Drawable="{StaticResource speedGraph}"
                       HeightRequest="200"
                       x:Name="speedGraphView" />
             <Image
-                
-                x:Name="bikeDisplay"
                 Source="bicycle.png"
-                HorizontalOptions="Center"/>
+                HorizontalOptions="Center"
+                Rotation="{Binding Path=Tilt, Converter={StaticResource MathExpressionConverter}, ConverterParameter='-2.5*x'}"
+                AnchorX="0.197"
+                AnchorY="0.726"
+                Margin="0,100,0,0"
+                />
+            <Line
+                BackgroundColor="White"
+                StrokeThickness="15"
+                />
         </VerticalStackLayout>
     </Grid>
 
