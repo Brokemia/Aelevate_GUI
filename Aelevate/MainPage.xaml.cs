@@ -16,8 +16,9 @@ public partial class MainPage : ContentPage {
 
         // Apply config           
         LogManager.Configuration = config;
+  		InitializeComponent();
+        ArduinoComm.Instance.View = this;
         new Thread(new ThreadStart(ArduinoComm.Instance.Start)).Start();
-		InitializeComponent();
         LockUnlock(null, null);
 	}
 
@@ -54,6 +55,10 @@ public partial class MainPage : ContentPage {
         if(routesModel.Locked) {
             routesModel.Resistance = (int)(routesModel.Tilt * 4);
         }
+    }
+
+    public void InvalidateSpeedGraph() {
+        speedGraphView.Invalidate();
     }
 }
 

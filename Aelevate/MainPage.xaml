@@ -6,15 +6,15 @@
              xmlns:local="clr-namespace:Aelevate"
              x:Class="Aelevate.MainPage"
              x:Name="mainPage">
+    <ContentPage.BindingContext>
+        <local:RoutesViewModel x:Name="routesModel"/>
+    </ContentPage.BindingContext>
     <ContentPage.Resources>
         <drawable:SpeedGraph x:Key="speedGraph" x:Name="speedGraph"/>
         <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
         <toolkit:IsNullConverter x:Key="IsNullConverter" />
         <toolkit:MathExpressionConverter x:Key="MathExpressionConverter" />
     </ContentPage.Resources>
-    <ContentPage.BindingContext>
-        <local:RoutesViewModel x:Name="routesModel"/>
-    </ContentPage.BindingContext>
     
     <Grid
         Padding="30,0">
@@ -23,27 +23,35 @@
             <ColumnDefinition Width="16*"/>
             <ColumnDefinition Width="11*"/>
         </Grid.ColumnDefinitions>
-        <VerticalStackLayout
-            Grid.Column="2"
-            VerticalOptions="Center"
-            Spacing="30">
-            <Grid
+        <AbsoluteLayout
+            Grid.Column="2">
+            <Image
+                AbsoluteLayout.LayoutBounds="0.99,0.99,0.4,0.2"
+                AbsoluteLayout.LayoutFlags="All"
+                Source="logo.png"/>
+            <VerticalStackLayout
+                Grid.Column="2"
+                VerticalOptions="Center"
+                AbsoluteLayout.LayoutBounds="0.5,0.5"
+                AbsoluteLayout.LayoutFlags="PositionProportional"
+                Spacing="30">
+                <Grid
                 Margin="30,0,15,0"
                 ColumnSpacing="10"
                 RowSpacing="30">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width=".3*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="1*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="70"/>
-                    <RowDefinition Height="70"/>
-                </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width=".3*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="70"/>
+                        <RowDefinition Height="70"/>
+                    </Grid.RowDefinitions>
 
-                <ImageButton
+                    <ImageButton
                     x:Name="unlockButton"
                     Grid.RowSpan="2"
                     Grid.Column="0"
@@ -52,7 +60,7 @@
                     IsVisible="{Binding Path=Locked, Converter={StaticResource InvertedBoolConverter}}"
                     IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
                     BackgroundColor="Transparent" />
-                <ImageButton
+                    <ImageButton
                     x:Name="lockButton"
                     Grid.RowSpan="2"
                     Grid.Column="0"
@@ -62,7 +70,7 @@
                     IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
                     BackgroundColor="Transparent" />
 
-                <Label
+                    <Label
                     Grid.Column="1"
                     Text="Resistance"
                     HorizontalOptions="Start"
@@ -70,7 +78,7 @@
                     FontSize="32"
                     SemanticProperties.HeadingLevel="Level1"
                 />
-                <Label
+                    <Label
                     Grid.Column="2"
                     Text="{Binding Path=Resistance, StringFormat='{0:F0}'}"
                     SemanticProperties.HeadingLevel="Level1"
@@ -78,7 +86,7 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                 />
-                <ImageButton
+                    <ImageButton
                     Grid.Column="4"
                     Source="plussign.png"
                     Clicked="ResistanceUp"
@@ -87,7 +95,7 @@
                     HeightRequest="60"
                     VerticalOptions="Center"
                 />
-                <ImageButton
+                    <ImageButton
                     Grid.Column="3"
                     Source="minussign.png"
                     Clicked="ResistanceDown"
@@ -96,7 +104,7 @@
                     VerticalOptions="Center"
                 />
 
-                <Label
+                    <Label
                     Grid.Row="1"
                     Grid.Column="1"
                     Text="Tilt"
@@ -105,7 +113,7 @@
                     FontSize="32"
                     SemanticProperties.HeadingLevel="Level1"
                 />
-                <Label
+                    <Label
                     Grid.Row="1"
                     Grid.Column="2"
                     Text="{Binding Path=Tilt, StringFormat=' {0:F1}°'}"
@@ -114,7 +122,7 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                 />
-                <ImageButton
+                    <ImageButton
                     Grid.Row="1"
                     Grid.Column="4"
                     Source="plussign.png"
@@ -123,7 +131,7 @@
                     IsEnabled="{Binding CurrentRoute, Converter={StaticResource IsNullConverter}}"
                     VerticalOptions="Center"
                 />
-                <ImageButton
+                    <ImageButton
                     Grid.Row="1"
                     Grid.Column="3"
                     Source="minussign.png"
@@ -133,13 +141,15 @@
                     VerticalOptions="Center"
                 />
 
-            </Grid>
-        </VerticalStackLayout>
+                </Grid>
+            </VerticalStackLayout>
+        </AbsoluteLayout>
 
         <Border
             Grid.Column="1"
             >
-            <ListView ItemsSource="{Binding Routes}">
+            <ListView ItemsSource="{Binding Routes}"
+                      VerticalOptions="Center">
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>

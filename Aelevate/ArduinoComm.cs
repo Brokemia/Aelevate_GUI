@@ -51,17 +51,37 @@ namespace Aelevate {
 
         SerialPort port;
 
+        public SpeedGraph SpeedGraph { get; set; }
+        public MainPage View { get; set; }
+
         private ArduinoComm() { }
         
         public void Start() {
             while (true) {
                 try {
                     Routine();
-                } catch (Exception) { }
+                } catch (Exception e) {
+                    Logger.Error(e.StackTrace);
+                }
             }
         }
 
+        bool firstSpeedData = true;
+        uint lastEncoder;
+        uint lastTime;
+
+        object speedLock = new();
+        float speed;
+
         public void Routine() {
+            //int test = 0;
+            //while(true) {
+            //    SpeedGraph.Speed = 10 + 5 * (float)Math.Sin(test / 20);
+            //    View.InvalidateSpeedGraph();
+            //    test++;
+            //    Thread.Sleep(100);
+            //}
+
             port = new();
             while (SerialPort.GetPortNames().Length == 0) Thread.Sleep(10);
             port.PortName = SerialPort.GetPortNames()[0];
@@ -70,12 +90,25 @@ namespace Aelevate {
             port.Open();
             Logger.Info("Connected to Arduino");
             // Stop arduino data output
-            new ArduinoCommand { ID = 'P' }.Write(port);
+            new ArduinoCommand { ID = 'y' }.Write(port);
             Thread.Sleep(500);
             // Exhaust any waiting data
             port.ReadExisting();
             // Start arduino data output
             new ArduinoCommand { ID = 'p' }.Write(port);
+
+            firstSpeedData = true;
+
+            Task.Run(() => {
+                while(true) {
+                    Thread.Sleep(700);
+                    lock(speedLock) {
+                        SpeedGraph.AddSpeed(speed);
+                        View.InvalidateSpeedGraph();
+                        speed = 0;
+                    }
+                }
+            });
 
             while (true) {
                 lock (queuedCommands) {
@@ -83,15 +116,41 @@ namespace Aelevate {
                         queuedCommands.Dequeue().Write(port);
                     }
                 }
+                //if(port.BytesToRead > 0)
+                //    Logger.Info(port.BytesToRead);
                 if (port.BytesToRead > 0) {
-                    byte[] bytes = new byte[sizeof(ulong)];
-                    port.Read(bytes, 0, bytes.Length);
-                    ulong encoder = BitConverter.ToUInt64(bytes);
-                    port.Read(bytes, 0, bytes.Length);
-                    ulong time = BitConverter.ToUInt64(bytes);
+                    uint encoder = ReadUInt();
+                    uint time = ReadUInt();
+                    if(!firstSpeedData) {
+                        const double rotationsPerRotation = 23.25f;
+                        const double wheelRad = 26 / 24f; // In feet
+                        const double wheelCircumference = 2 * wheelRad * Math.PI;
+                        double deltaEncoder = (encoder - lastEncoder) / rotationsPerRotation * wheelCircumference;
+                        uint deltaTime = time - lastTime;
+                        Logger.Info("Miles: " + (deltaEncoder / 5200) + " per hours: " + ((double)deltaTime / (1000 * 60 * 60)));
+                        // In miles per hour
+                        lock (speedLock) {
+                            speed = (float)deltaEncoder / deltaTime * 1000 * 60 * 60 / 5280;
+                        }
+                    }
+                    firstSpeedData = false;
+                    lastEncoder = encoder;
+                    lastTime = time;
                 }
                 Thread.Yield();
             }
+        }
+
+        private uint ReadUInt() {
+            byte[] bytes = new byte[sizeof(uint)];
+            string log = "";
+            for(int i = 0; i < bytes.Length; i++) {
+                while (port.BytesToRead <= 0) Thread.Yield();
+                bytes[i] = (byte)port.ReadByte();
+                log += bytes[i] + " ";
+            }
+            
+            return BitConverter.ToUInt32(bytes);
         }
 
         public void ResetTrainer() {
